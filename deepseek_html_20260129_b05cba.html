@@ -1,0 +1,2824 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG PVE Epic - Trò Chơi Nhập Vai Chi Tiết</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #00a8ff;
+            --secondary-color: #4cd137;
+            --danger-color: #e84118;
+            --warning-color: #fbc531;
+            --epic-color: #9c88ff;
+            --legendary-color: #f1c40f;
+            --dark-bg: #0c1427;
+            --darker-bg: #080f1f;
+            --light-text: #f5f6fa;
+            --medium-text: #dcdde1;
+        }
+
+        body {
+            background: radial-gradient(ellipse at bottom, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            color: var(--light-text);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(76, 209, 55, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 80% 70%, rgba(0, 168, 255, 0.05) 0%, transparent 20%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(12, 20, 39, 0.9) 0%, rgba(8, 15, 31, 0.9) 100%);
+            border-radius: 20px;
+            border: 2px solid var(--primary-color);
+            box-shadow: 
+                0 0 30px rgba(0, 168, 255, 0.3),
+                inset 0 0 20px rgba(0, 168, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 168, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 8s infinite alternate;
+            z-index: 0;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.3; }
+            100% { transform: scale(1.2); opacity: 0.5; }
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 3.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(0, 168, 255, 0.7);
+            position: relative;
+            z-index: 1;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #00a8ff, #4cd137);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            color: var(--secondary-color);
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        /* Player Info */
+        .player-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .player-info:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00a8ff, #4cd137);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin-right: 25px;
+            border: 4px solid white;
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .avatar::after {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            top: -25%;
+            left: -25%;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .player-stats {
+            flex: 1;
+        }
+
+        .stat-bar {
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-fill {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.3) 50%, 
+                transparent 100%);
+            animation: shine 2s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .hp-bar .stat-fill {
+            background: linear-gradient(90deg, #e84118, #ff7f50);
+        }
+
+        .mp-bar .stat-fill {
+            background: linear-gradient(90deg, #00a8ff, #3498db);
+        }
+
+        .exp-bar .stat-fill {
+            background: linear-gradient(90deg, #4cd137, #2ecc71);
+        }
+
+        .stat-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            margin-top: 5px;
+        }
+
+        /* Game Container */
+        .game-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .main-panel {
+            flex: 3;
+            min-width: 300px;
+            background: linear-gradient(135deg, rgba(12, 20, 39, 0.9) 0%, rgba(8, 15, 31, 0.9) 100%);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid var(--primary-color);
+            box-shadow: 0 0 30px rgba(0, 168, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .side-panel {
+            flex: 1;
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .panel {
+            background: linear-gradient(135deg, rgba(12, 20, 39, 0.9) 0%, rgba(8, 15, 31, 0.9) 100%);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid var(--secondary-color);
+            box-shadow: 0 0 20px rgba(76, 209, 55, 0.15);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(76, 209, 55, 0.25);
+        }
+
+        .panel h2 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(76, 209, 55, 0.3);
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel h2 i {
+            font-size: 1.4rem;
+        }
+
+        .panel h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Tabs */
+        .tab-container {
+            margin-bottom: 25px;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 18px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            color: var(--medium-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary-color);
+            transform: translateY(3px);
+            transition: transform 0.3s;
+        }
+
+        .tab:hover {
+            background: rgba(0, 168, 255, 0.2);
+            color: white;
+        }
+
+        .tab.active {
+            background: rgba(0, 168, 255, 0.3);
+            color: white;
+        }
+
+        .tab.active::after {
+            transform: translateY(0);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Combat Area */
+        .combat-area {
+            text-align: center;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 2px solid var(--danger-color);
+            box-shadow: 
+                0 0 20px rgba(232, 65, 24, 0.2),
+                inset 0 0 20px rgba(232, 65, 24, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .area-info {
+            margin-bottom: 25px;
+        }
+
+        .area-name {
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(0, 168, 255, 0.5);
+        }
+
+        .area-desc {
+            color: var(--medium-text);
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .battle-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+            position: relative;
+            min-height: 300px;
+        }
+
+        .player-side, .enemy-side {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .character {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .player-character, .enemy-character {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            margin-bottom: 20px;
+            border: 5px solid;
+            position: relative;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .player-character {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 168, 255, 0.1);
+        }
+
+        .enemy-character {
+            border-color: var(--danger-color);
+            background-color: rgba(232, 65, 24, 0.1);
+        }
+
+        .player-character.attacking {
+            animation: playerAttack 0.5s ease;
+        }
+
+        .enemy-character.attacking {
+            animation: enemyAttack 0.5s ease;
+        }
+
+        .player-character.taking-damage {
+            animation: takeDamage 0.3s ease;
+        }
+
+        .enemy-character.taking-damage {
+            animation: takeDamage 0.3s ease;
+        }
+
+        @keyframes playerAttack {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(50px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes enemyAttack {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(-50px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes takeDamage {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .damage-popup {
+            position: absolute;
+            color: var(--danger-color);
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+            animation: popup 1s ease forwards;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .heal-popup {
+            position: absolute;
+            color: var(--secondary-color);
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+            animation: popup 1s ease forwards;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        @keyframes popup {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-80px); }
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            min-width: 160px;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.2) 50%, 
+                transparent 100%);
+            transform: translateX(-100%);
+        }
+
+        .btn:hover::after {
+            animation: btnShine 0.8s;
+        }
+
+        @keyframes btnShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #0097e6);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 168, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0097e6, var(--primary-color));
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 168, 255, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #c23616);
+            color: white;
+            box-shadow: 0 5px 15px rgba(232, 65, 24, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c23616, var(--danger-color));
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(232, 65, 24, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--secondary-color), #44bd32);
+            color: white;
+            box-shadow: 0 5px 15px rgba(76, 209, 55, 0.3);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #44bd32, var(--secondary-color));
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(76, 209, 55, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color), #e1b12c);
+            color: white;
+            box-shadow: 0 5px 15px rgba(251, 197, 49, 0.3);
+        }
+
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #e1b12c, var(--warning-color));
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(251, 197, 49, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Inventory & Items */
+        .inventory-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        .inventory-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .inventory-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .inventory-items::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .inventory-items::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary-color);
+            transform: translateY(-5px);
+            transition: transform 0.3s;
+        }
+
+        .item:hover::before {
+            transform: translateY(0);
+        }
+
+        .item:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .item.common {
+            border-color: #bdc3c7;
+        }
+
+        .item.uncommon {
+            border-color: #2ecc71;
+        }
+
+        .item.rare {
+            border-color: var(--primary-color);
+        }
+
+        .item.epic {
+            border-color: var(--epic-color);
+        }
+
+        .item.legendary {
+            border-color: var(--legendary-color);
+        }
+
+        .item-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .item-name {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .item-stats {
+            font-size: 0.9rem;
+            color: var(--medium-text);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .item-rarity {
+            font-size: 0.8rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        .rarity-common { background: #bdc3c7; color: #2c3e50; }
+        .rarity-uncommon { background: #2ecc71; color: white; }
+        .rarity-rare { background: var(--primary-color); color: white; }
+        .rarity-epic { background: var(--epic-color); color: white; }
+        .rarity-legendary { background: var(--legendary-color); color: #2c3e50; }
+
+        /* Quests */
+        .quest-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .quest {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid var(--secondary-color);
+            transition: all 0.3s;
+        }
+
+        .quest:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .quest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .quest-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+        }
+
+        .quest-reward {
+            background: rgba(251, 197, 49, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .quest-progress {
+            margin: 15px 0;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), #2ecc71);
+            border-radius: 5px;
+            transition: width 0.8s ease;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: var(--medium-text);
+        }
+
+        /* Spin Wheel */
+        .spin-container {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .wheel-container {
+            position: relative;
+            margin: 40px auto;
+            width: 400px;
+            height: 400px;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            border: 8px solid var(--legendary-color);
+            box-shadow: 
+                0 0 30px rgba(241, 196, 15, 0.5),
+                inset 0 0 30px rgba(0, 0, 0, 0.5);
+            transition: transform 4s cubic-bezier(0.2, 0.8, 0.3, 1);
+        }
+
+        .wheel.spinning {
+            animation: wheelSpin 4s cubic-bezier(0.2, 0.8, 0.3, 1);
+        }
+
+        @keyframes wheelSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(1080deg); }
+        }
+
+        .wheel-section {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            left: 0;
+            top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-top: 40px solid var(--legendary-color);
+            z-index: 10;
+            filter: drop-shadow(0 0 10px rgba(241, 196, 15, 0.8));
+        }
+
+        /* Login Rewards */
+        .login-rewards-days {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+        }
+
+        .reward-day {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .reward-day.claimed {
+            background: var(--secondary-color);
+            border-color: white;
+            box-shadow: 0 0 15px rgba(76, 209, 55, 0.5);
+        }
+
+        .reward-day.available {
+            background: var(--primary-color);
+            border-color: white;
+            animation: pulseDay 2s infinite;
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.7);
+        }
+
+        .reward-day.upcoming {
+            opacity: 0.6;
+        }
+
+        @keyframes pulseDay {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .day-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .day-reward {
+            font-size: 0.7rem;
+            margin-top: 5px;
+        }
+
+        /* Log */
+        .log {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 25px;
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.95rem;
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log-entries {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .log-entry {
+            padding: 12px 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid var(--primary-color);
+            animation: slideIn 0.3s ease;
+        }
+
+        .log-entry.combat {
+            border-left-color: var(--danger-color);
+        }
+
+        .log-entry.reward {
+            border-left-color: var(--secondary-color);
+        }
+
+        .log-entry.level {
+            border-left-color: var(--warning-color);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .log-time {
+            color: var(--primary-color);
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--medium-text);
+            font-size: 0.95rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .footer-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-link:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .inventory-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .game-container {
+                flex-direction: column;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                min-width: 33.33%;
+            }
+            
+            .login-rewards-days {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+            
+            .wheel-container {
+                width: 350px;
+                height: 350px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tab {
+                min-width: 50%;
+            }
+            
+            .player-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .avatar {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .battle-field {
+                flex-direction: column;
+                min-height: auto;
+            }
+            
+            .player-side, .enemy-side {
+                width: 100%;
+            }
+            
+            .wheel-container {
+                width: 300px;
+                height: 300px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tab {
+                min-width: 100%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .wheel-container {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .inventory-items {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(0, 168, 255, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) translateX(100px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles -->
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-dragon"></i> RPG PVE EPIC</h1>
+            <p class="subtitle">Chiến đấu - Thăng cấp - Thu thập - Khám phá thế giới rộng lớn</p>
+            <div class="player-info">
+                <div class="avatar">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div class="player-stats">
+                    <div class="stat-bar hp-bar">
+                        <div class="stat-fill" id="hp-bar" style="width: 100%"></div>
+                    </div>
+                    <div class="stat-text">
+                        <span id="hp-text">HP: 100/100</span>
+                        <span id="player-level">Cấp: 1</span>
+                    </div>
+                    
+                    <div class="stat-bar mp-bar">
+                        <div class="stat-fill" id="mp-bar" style="width: 100%"></div>
+                    </div>
+                    <div class="stat-text">
+                        <span id="mp-text">MP: 50/50</span>
+                        <span id="player-class">Chiến Binh</span>
+                    </div>
+                    
+                    <div class="stat-bar exp-bar">
+                        <div class="stat-fill" id="exp-bar" style="width: 0%"></div>
+                    </div>
+                    <div class="stat-text">
+                        <span id="exp-text">EXP: 0/100</span>
+                        <span id="gold"><i class="fas fa-coins"></i> Vàng: 1000</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="game-container">
+            <div class="main-panel">
+                <div class="tab-container">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="combat">
+                            <i class="fas fa-fist-raised"></i> Chiến Đấu
+                        </div>
+                        <div class="tab" data-tab="inventory">
+                            <i class="fas fa-backpack"></i> Kho Đồ
+                        </div>
+                        <div class="tab" data-tab="quests">
+                            <i class="fas fa-tasks"></i> Nhiệm Vụ
+                        </div>
+                        <div class="tab" data-tab="skills">
+                            <i class="fas fa-fire"></i> Kỹ Năng
+                        </div>
+                        <div class="tab" data-tab="spin">
+                            <i class="fas fa-gift"></i> Quay Thưởng
+                        </div>
+                        <div class="tab" data-tab="login-rewards">
+                            <i class="fas fa-calendar-day"></i> Đăng Nhập
+                        </div>
+                    </div>
+
+                    <!-- Combat Tab -->
+                    <div id="combat" class="tab-content active">
+                        <div class="combat-area">
+                            <div class="area-info">
+                                <h2 class="area-name" id="area-name">Rừng Bóng Đêm</h2>
+                                <p class="area-desc" id="area-desc">Khu rừng âm u đầy bí ẩn, nơi trú ngụ của những sinh vật nguy hiểm. Hãy thận trọng với từng bước chân!</p>
+                            </div>
+                            
+                            <div class="battle-field">
+                                <div class="player-side">
+                                    <div class="character">
+                                        <div class="player-character" id="player-character">
+                                            <i class="fas fa-knight"></i>
+                                        </div>
+                                        <h3 id="player-name">Chiến Binh</h3>
+                                        <div class="player-hp">HP: <span id="player-hp">100</span>/<span id="player-max-hp">100</span></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="vs">VS</div>
+                                
+                                <div class="enemy-side">
+                                    <div class="character">
+                                        <div class="enemy-character" id="enemy-character">
+                                            <i class="fas fa-ghost"></i>
+                                        </div>
+                                        <h3 id="enemy-name">Bóng Ma Rừng</h3>
+                                        <div class="enemy-hp">HP: <span id="enemy-hp">120</span>/<span id="enemy-max-hp">120</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn btn-danger" id="attack-btn">
+                                    <i class="fas fa-sword"></i> Tấn Công
+                                </button>
+                                <button class="btn btn-primary" id="skill-btn" data-skill="fireball">
+                                    <i class="fas fa-fire"></i> Cầu Lửa (15 MP)
+                                </button>
+                                <button class="btn btn-success" id="heal-btn">
+                                    <i class="fas fa-heart"></i> Hồi Phục (20 MP)
+                                </button>
+                                <button class="btn btn-warning" id="defend-btn">
+                                    <i class="fas fa-shield-alt"></i> Phòng Thủ
+                                </button>
+                                <button class="btn btn-primary" id="next-enemy-btn">
+                                    <i class="fas fa-forward"></i> Kẻ Thù Mới
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="log">
+                            <div class="log-header">
+                                <h3><i class="fas fa-scroll"></i> Nhật Ký Chiến Đấu</h3>
+                                <button class="btn btn-primary" id="clear-log-btn" style="padding: 8px 15px; font-size: 0.9rem;">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </button>
+                            </div>
+                            <div class="log-entries" id="combat-log">
+                                <div class="log-entry">
+                                    <span class="log-time">[10:00:15]</span> Chào mừng đến với RPG PVE Epic! Hãy bắt đầu cuộc phiêu lưu của bạn.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inventory Tab -->
+                    <div id="inventory" class="tab-content">
+                        <div class="inventory-container">
+                            <div>
+                                <h3><i class="fas fa-box-open"></i> Kho Đồ Của Bạn <span id="inventory-count">(12/50)</span></h3>
+                                <div class="inventory-items" id="inventory-items">
+                                    <!-- Items will be generated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3><i class="fas fa-user-check"></i> Trang Bị Đang Mặc</h3>
+                                <div class="equipment-slots" id="equipment-slots">
+                                    <!-- Equipment slots will be generated by JavaScript -->
+                                </div>
+                                
+                                <h3 style="margin-top: 30px;"><i class="fas fa-chart-line"></i> Thống Kê</h3>
+                                <div class="player-details">
+                                    <p><i class="fas fa-fist-raised"></i> <strong>Sức mạnh:</strong> <span id="player-power">15</span></p>
+                                    <p><i class="fas fa-shield-alt"></i> <strong>Phòng thủ:</strong> <span id="player-defense">8</span></p>
+                                    <p><i class="fas fa-bolt"></i> <strong>Tốc độ:</strong> <span id="player-speed">12</span></p>
+                                    <p><i class="fas fa-dice"></i> <strong>May mắn:</strong> <span id="player-luck">5</span></p>
+                                    <p><i class="fas fa-magic"></i> <strong>Sức mạnh phép:</strong> <span id="player-magic">10</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quests Tab -->
+                    <div id="quests" class="tab-content">
+                        <h3><i class="fas fa-flag"></i> Nhiệm Vụ Đang Thực Hiện</h3>
+                        <div class="quest-list" id="active-quests">
+                            <!-- Active quests will be generated by JavaScript -->
+                        </div>
+                        
+                        <h3 style="margin-top: 30px;"><i class="fas fa-check-circle"></i> Nhiệm Vụ Đã Hoàn Thành</h3>
+                        <div class="quest-list" id="completed-quests">
+                            <!-- Completed quests will be generated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Skills Tab -->
+                    <div id="skills" class="tab-content">
+                        <div class="skills-container">
+                            <h3><i class="fas fa-star"></i> Kỹ Năng Đã Học</h3>
+                            <div class="inventory-items" id="skills-list">
+                                <!-- Skills will be generated by JavaScript -->
+                            </div>
+                            
+                            <h3 style="margin-top: 30px;"><i class="fas fa-graduation-cap"></i> Cây Kỹ Năng</h3>
+                            <div class="skill-tree" id="skill-tree">
+                                <div class="skill-tree-container">
+                                    <!-- Skill tree will be generated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Spin Tab -->
+                    <div id="spin" class="tab-content">
+                        <div class="spin-container">
+                            <h2><i class="fas fa-gift"></i> Vòng Quay May Mắn</h2>
+                            <p>Bạn còn <span id="spin-count" class="highlight">5</span> lượt quay hôm nay</p>
+                            <p>Chi phí: <i class="fas fa-coins"></i> <span id="spin-cost">100</span> vàng/lượt</p>
+                            
+                            <div class="wheel-container">
+                                <div class="wheel" id="wheel">
+                                    <div class="wheel-pointer"></div>
+                                    <!-- Wheel sections will be generated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <div class="action-buttons" style="justify-content: center;">
+                                <button class="btn btn-warning" id="spin-btn" style="padding: 18px 50px; font-size: 1.3rem;">
+                                    <i class="fas fa-redo"></i> QUAY NGAY
+                                </button>
+                                <button class="btn btn-primary" id="buy-spin-btn">
+                                    <i class="fas fa-shopping-cart"></i> Mua Thêm Lượt
+                                </button>
+                            </div>
+                            
+                            <div class="recent-rewards" style="margin-top: 30px;">
+                                <h3><i class="fas fa-trophy"></i> Phần Thưởng Gần Đây</h3>
+                                <div class="inventory-items" id="recent-rewards">
+                                    <!-- Recent rewards will be generated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Login Rewards Tab -->
+                    <div id="login-rewards" class="tab-content">
+                        <h2><i class="fas fa-calendar-alt"></i> Phần Thưởng Đăng Nhập Hằng Ngày</h2>
+                        <p>Đăng nhập liên tục để nhận phần thưởng giá trị tăng dần mỗi ngày!</p>
+                        
+                        <div class="login-rewards-days" id="login-rewards-days">
+                            <!-- Login reward days will be generated by JavaScript -->
+                        </div>
+                        
+                        <div style="margin-top: 40px; text-align: center;">
+                            <div class="today-reward">
+                                <h3><i class="fas fa-gift"></i> Phần Thưởng Hôm Nay</h3>
+                                <div class="item epic" style="max-width: 300px; margin: 20px auto;">
+                                    <div class="item-icon"><i class="fas fa-gem"></i></div>
+                                    <div class="item-name">Rương Báu Ngày 3</div>
+                                    <div class="item-stats">
+                                        <p><i class="fas fa-coins"></i> 500 Vàng</p>
+                                        <p><i class="fas fa-fire"></i> 3 Bình Mana</p>
+                                        <p><i class="fas fa-shield-alt"></i> Áo Giáp Hiếm</p>
+                                    </div>
+                                    <div class="item-rarity rarity-epic">EPIC</div>
+                                    <button class="btn btn-success claim-reward-btn" data-day="3" style="margin-top: 15px;">
+                                        <i class="fas fa-gift"></i> Nhận Thưởng
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <p style="margin-top: 25px; color: var(--medium-text);">
+                                <i class="fas fa-info-circle"></i> Phần thưởng sẽ được reset nếu bạn không đăng nhập trong 7 ngày liên tiếp.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="panel">
+                    <h2><i class="fas fa-user"></i> Thông Tin Nhân Vật</h2>
+                    <div class="player-details">
+                        <p><i class="fas fa-signature"></i> <strong>Tên:</strong> <span id="detail-name">Chiến Binh Dũng Mãnh</span></p>
+                        <p><i class="fas fa-layer-group"></i> <strong>Cấp độ:</strong> <span id="detail-level">1</span></p>
+                        <p><i class="fas fa-medal"></i> <strong>Danh hiệu:</strong> <span id="detail-title">Tân Thủ</span></p>
+                        <p><i class="fas fa-map-marker-alt"></i> <strong>Khu vực:</strong> <span id="detail-area">Rừng Bóng Đêm</span></p>
+                        <p><i class="fas fa-skull-crossbones"></i> <strong>Quái đã tiêu diệt:</strong> <span id="detail-enemies">0</span></p>
+                        <p><i class="fas fa-hourglass-half"></i> <strong>Thời gian chơi:</strong> <span id="detail-playtime">00:15:22</span></p>
+                    </div>
+                </div>
+                
+                <div class="panel">
+                    <h2><i class="fas fa-trophy"></i> Xếp Hạng</h2>
+                    <div class="leaderboard" id="leaderboard">
+                        <div class="leaderboard-entry top">
+                            <span class="rank">1</span>
+                            <span class="name"><i class="fas fa-crown"></i> Bá Vương</span>
+                            <span class="level">Cấp 45</span>
+                        </div>
+                        <div class="leaderboard-entry">
+                            <span class="rank">2</span>
+                            <span class="name">Thiên Tài</span>
+                            <span class="level">Cấp 38</span>
+                        </div>
+                        <div class="leaderboard-entry">
+                            <span class="rank">3</span>
+                            <span class="name">Chiến Thần</span>
+                            <span class="level">Cấp 32</span>
+                        </div>
+                        <div class="leaderboard-entry you">
+                            <span class="rank">127</span>
+                            <span class="name"><i class="fas fa-user"></i> Bạn</span>
+                            <span class="level">Cấp 1</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel">
+                    <h2><i class="fas fa-calendar-star"></i> Sự Kiện</h2>
+                    <div class="events-list">
+                        <div class="event active">
+                            <div class="event-title"><i class="fas fa-bolt"></i> Sự kiện x2 EXP</div>
+                            <div class="event-time">Còn lại: 2 giờ 15 phút</div>
+                        </div>
+                        <div class="event">
+                            <div class="event-title"><i class="fas fa-gem"></i> Quà tân thủ cấp 10</div>
+                            <div class="event-time">Nhận ngay 2000 vàng</div>
+                        </div>
+                        <div class="event">
+                            <div class="event-title"><i class="fas fa-users"></i> Giải đấu PVP</div>
+                            <div class="event-time">Bắt đầu: Chủ Nhật</div>
+                        </div>
+                        <div class="event">
+                            <div class="event-title"><i class="fas fa-dungeon"></i> Ra mắt dungeon mới</div>
+                            <div class="event-time">Tuần sau</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel">
+                    <h2><i class="fas fa-store"></i> Cửa Hàng Nhanh</h2>
+                    <div class="shop-items">
+                        <div class="shop-item">
+                            <div class="item-name">5 Lượt Quay</div>
+                            <div class="item-price"><i class="fas fa-coins"></i> 400</div>
+                            <button class="btn btn-primary btn-small">Mua</button>
+                        </div>
+                        <div class="shop-item">
+                            <div class="item-name">Bình HP Lớn</div>
+                            <div class="item-price"><i class="fas fa-coins"></i> 150</div>
+                            <button class="btn btn-primary btn-small">Mua</button>
+                        </div>
+                        <div class="shop-item">
+                            <div class="item-name">Rương Bí Ẩn</div>
+                            <div class="item-price"><i class="fas fa-coins"></i> 500</div>
+                            <button class="btn btn-primary btn-small">Mua</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>RPG PVE Epic &copy; 2023 - Trò chơi nhập vai PVE với đồ họa đẹp và hệ thống chi tiết</p>
+            <p>Dữ liệu được lưu tự động vào trình duyệt của bạn. Chơi mọi lúc, mọi nơi!</p>
+            <div class="footer-links">
+                <a href="#" class="footer-link"><i class="fas fa-question-circle"></i> Hướng dẫn</a>
+                <a href="#" class="footer-link"><i class="fas fa-cog"></i> Cài đặt</a>
+                <a href="#" class="footer-link"><i class="fas fa-save"></i> Sao lưu dữ liệu</a>
+                <a href="#" class="footer-link"><i class="fas fa-redo"></i> Reset game</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Game State với dữ liệu chi tiết
+        const gameState = {
+            player: {
+                name: "Chiến Binh Dũng Mãnh",
+                class: "Warrior",
+                level: 1,
+                exp: 0,
+                maxExp: 100,
+                hp: 100,
+                maxHp: 100,
+                mp: 50,
+                maxMp: 50,
+                gold: 1000,
+                strength: 15,
+                defense: 8,
+                speed: 12,
+                luck: 5,
+                magic: 10,
+                enemiesDefeated: 0,
+                playTime: 922, // seconds
+                title: "Tân Thủ",
+                skillPoints: 0
+            },
+            enemy: {
+                name: "Bóng Ma Rừng",
+                hp: 120,
+                maxHp: 120,
+                strength: 18,
+                defense: 5,
+                exp: 35,
+                goldMin: 25,
+                goldMax: 50,
+                type: "ghost",
+                icon: "fas fa-ghost",
+                abilities: ["Hút máu", "Sợ ánh sáng"]
+            },
+            inventory: [
+                { id: 1, name: "Kiếm Sắt Bạc", type: "weapon", rarity: "uncommon", icon: "fas fa-sword", strength: 8, value: 120 },
+                { id: 2, name: "Khiên Gỗ Cứng", type: "shield", rarity: "common", icon: "fas fa-shield-alt", defense: 5, value: 80 },
+                { id: 3, name: "Áo Giáp Da Thuộc", type: "armor", rarity: "common", icon: "fas fa-vest", defense: 7, hp: 20, value: 150 },
+                { id: 4, name: "Bình HP Lớn", type: "potion", rarity: "uncommon", icon: "fas fa-heart", heal: 50, value: 75 },
+                { id: 5, name: "Bình MP Lớn", type: "potion", rarity: "uncommon", icon: "fas fa-wine-bottle", mana: 30, value: 90 },
+                { id: 6, name: "Nhẫn May Mắn", type: "accessory", rarity: "rare", icon: "fas fa-ring", luck: 10, value: 300 },
+                { id: 7, name: "Găng Tay Sắt", type: "gloves", rarity: "common", icon: "fas fa-hand-fist", strength: 3, value: 60 },
+                { id: 8, name: "Giày Da Nhanh", type: "boots", rarity: "uncommon", icon: "fas fa-walking", speed: 5, value: 110 },
+                { id: 9, name: "Mũ Thủ Lĩnh", type: "helmet", rarity: "rare", icon: "fas fa-hat-wizard", defense: 4, hp: 15, mp: 10, value: 200 },
+                { id: 10, name: "Dây Chuyền Bảo Vệ", type: "amulet", rarity: "uncommon", icon: "fas fa-gem", defense: 3, magic: 5, value: 180 },
+                { id: 11, name: "Rương Bí Ẩn", type: "chest", rarity: "epic", icon: "fas fa-box-open", value: 500 },
+                { id: 12, name: "Cuộn Hồi Sinh", type: "scroll", rarity: "rare", icon: "fas fa-scroll", revive: true, value: 400 }
+            ],
+            equipped: {
+                weapon: null,
+                shield: null,
+                armor: null,
+                helmet: null,
+                gloves: null,
+                boots: null,
+                amulet: null,
+                ring: null
+            },
+            skills: [
+                { id: 1, name: "Cầu Lửa", type: "active", icon: "fas fa-fire", damage: 25, cost: 15, cooldown: 3, level: 1, maxLevel: 5, description: "Triệu hồi quả cầu lửa tấn công kẻ thù" },
+                { id: 2, name: "Chữa Lành", type: "active", icon: "fas fa-heart", heal: 40, cost: 20, cooldown: 4, level: 1, maxLevel: 5, description: "Hồi phục HP cho bản thân" },
+                { id: 3, name: "Tăng Sức Mạnh", type: "passive", icon: "fas fa-fist-raised", strength: 5, level: 1, maxLevel: 3, description: "Vĩnh viễn tăng sức mạnh" },
+                { id: 4, name: "Phòng Thủ Kiên Cố", type: "passive", icon: "fas fa-shield-alt", defense: 3, level: 1, maxLevel: 3, description: "Vĩnh viễn tăng phòng thủ" }
+            ],
+            quests: {
+                active: [
+                    { id: 1, name: "Tiêu diệt Bóng Ma", description: "Đánh bại 10 Bóng Ma Rừng", target: 10, progress: 0, rewardGold: 500, rewardExp: 200, rewardItem: "Kiếm Ma Thuật", icon: "fas fa-ghost" },
+                    { id: 2, name: "Thu thập Tài nguyên", description: "Thu thập 50 Vàng từ quái vật", target: 50, progress: 0, rewardGold: 300, rewardExp: 150, rewardItem: "Rương Nhỏ", icon: "fas fa-coins" },
+                    { id: 3, name: "Thám hiểm Rừng Sâu", description: "Khám phá 3 khu vực mới", target: 3, progress: 1, rewardGold: 800, rewardExp: 300, rewardItem: "Bản Đồ Quý", icon: "fas fa-map" }
+                ],
+                completed: [
+                    { id: 0, name: "Nhập môn Chiến Binh", description: "Hoàn thành hướng dẫn cơ bản", rewardGold: 200, rewardExp: 100, icon: "fas fa-graduation-cap" }
+                ]
+            },
+            spin: {
+                count: 5,
+                cost: 100,
+                recentRewards: [
+                    { name: "200 Vàng", icon: "fas fa-coins", rarity: "common" },
+                    { name: "Bình HP", icon: "fas fa-heart", rarity: "uncommon" },
+                    { name: "Kiếm Sắt", icon: "fas fa-sword", rarity: "common" }
+                ]
+            },
+            loginRewards: [
+                { day: 1, name: "Ngày 1", reward: "100 Vàng + Bình HP", icon: "fas fa-coins", claimed: false },
+                { day: 2, name: "Ngày 2", reward: "150 Vàng + Kiếm Sắt", icon: "fas fa-sword", claimed: true },
+                { day: 3, name: "Ngày 3", reward: "500 Vàng + Áo Giáp", icon: "fas fa-shield-alt", claimed: false },
+                { day: 4, name: "Ngày 4", reward: "200 Vàng + 2 Bình MP", icon: "fas fa-wine-bottle", claimed: false },
+                { day: 5, name: "Ngày 5", reward: "800 Vàng + 1 Lượt Quay", icon: "fas fa-redo", claimed: false },
+                { day: 6, name: "Ngày 6", reward: "1000 Vàng + Khiên Hiếm", icon: "fas fa-shield-alt", claimed: false },
+                { day: 7, name: "Ngày 7", reward: "2000 Vàng + Rương Báu", icon: "fas fa-gem", claimed: false }
+            ],
+            currentDay: 3,
+            areas: [
+                { id: 1, name: "Rừng Bóng Đêm", description: "Khu rừng âm u đầy bí ẩn, nơi trú ngụ của những sinh vật nguy hiểm.", enemies: ["Bóng Ma Rừng", "Goblin Đen", "Sói Tàn Ác"], difficulty: 1 },
+                { id: 2, name: "Hang Động Cổ Xưa", description: "Hang động sâu thẳm với những bức tường khắc chữ cổ và kho báu ẩn giấu.", enemies: ["Dơi Khổng Lồ", "Nhện Độc", "Người Đá"], difficulty: 2 },
+                { id: 3, name: "Núi Lửa Diệt Vong", description: "Ngọn núi lửa đang hoạt động với nhiệt độ cực cao và quái vật lửa.", enemies: ["Quỷ Lửa", "Rồng Con", "Ngọn Lửa Sống"], difficulty: 3 },
+                { id: 4, name: "Đầm Lầy Chết Chóc", description: "Vùng đầm lầy rộng lớn với không khí độc hại và sinh vật dị biến.", enemies: ["Rắn Độc", "Cá Sấu Khổng Lồ", "Bùn Người"], difficulty: 4 }
+            ],
+            currentAreaId: 1,
+            logEntries: [],
+            settings: {
+                sound: true,
+                music: true,
+                animations: true
+            }
+        };
+
+        // DOM Elements
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const attackBtn = document.getElementById('attack-btn');
+        const skillBtn = document.getElementById('skill-btn');
+        const healBtn = document.getElementById('heal-btn');
+        const defendBtn = document.getElementById('defend-btn');
+        const nextEnemyBtn = document.getElementById('next-enemy-btn');
+        const spinBtn = document.getElementById('spin-btn');
+        const clearLogBtn = document.getElementById('clear-log-btn');
+        const combatLog = document.getElementById('combat-log');
+        const inventoryItems = document.getElementById('inventory-items');
+        const equipmentSlots = document.getElementById('equipment-slots');
+        const activeQuests = document.getElementById('active-quests');
+        const completedQuests = document.getElementById('completed-quests');
+        const skillsList = document.getElementById('skills-list');
+        const loginRewardsDays = document.getElementById('login-rewards-days');
+        const wheel = document.getElementById('wheel');
+        const particlesContainer = document.getElementById('particles');
+        
+        // Initialize game
+        function initGame() {
+            loadGame();
+            updateUI();
+            setupTabs();
+            setupWheel();
+            generateEnemy();
+            setupEventListeners();
+            createParticles();
+            startPlayTime();
+            addLogEntry("Chào mừng đến với RPG PVE Epic! Hãy bắt đầu cuộc phiêu lưu của bạn.", "system");
+        }
+
+        // Create floating particles
+        function createParticles() {
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 15}s`;
+                particle.style.width = `${Math.random() * 4 + 2}px`;
+                particle.style.height = particle.style.width;
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Load game from localStorage
+        function loadGame() {
+            const savedGame = localStorage.getItem('rpgGameEpic');
+            if (savedGame) {
+                const savedState = JSON.parse(savedGame);
+                Object.assign(gameState, savedState);
+                addLogEntry("Đã tải dữ liệu game từ lần chơi trước.", "system");
+            }
+        }
+
+        // Save game to localStorage
+        function saveGame() {
+            localStorage.setItem('rpgGameEpic', JSON.stringify(gameState));
+        }
+
+        // Start play time counter
+        function startPlayTime() {
+            setInterval(() => {
+                gameState.player.playTime++;
+                updatePlayTime();
+            }, 1000);
+        }
+
+        // Update play time display
+        function updatePlayTime() {
+            const hours = Math.floor(gameState.player.playTime / 3600);
+            const minutes = Math.floor((gameState.player.playTime % 3600) / 60);
+            const seconds = gameState.player.playTime % 60;
+            
+            document.getElementById('detail-playtime').textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Update all UI elements
+        function updateUI() {
+            // Player stats
+            document.getElementById('hp-text').textContent = `HP: ${gameState.player.hp}/${gameState.player.maxHp}`;
+            document.getElementById('hp-bar').style.width = `${(gameState.player.hp / gameState.player.maxHp) * 100}%`;
+            document.getElementById('mp-text').textContent = `MP: ${gameState.player.mp}/${gameState.player.maxMp}`;
+            document.getElementById('mp-bar').style.width = `${(gameState.player.mp / gameState.player.maxMp) * 100}%`;
+            document.getElementById('player-level').textContent = `Cấp: ${gameState.player.level}`;
+            document.getElementById('exp-text').textContent = `EXP: ${gameState.player.exp}/${gameState.player.maxExp}`;
+            document.getElementById('exp-bar').style.width = `${(gameState.player.exp / gameState.player.maxExp) * 100}%`;
+            document.getElementById('gold').innerHTML = `<i class="fas fa-coins"></i> Vàng: ${gameState.player.gold}`;
+            
+            // Player details
+            document.getElementById('detail-name').textContent = gameState.player.name;
+            document.getElementById('detail-level').textContent = gameState.player.level;
+            document.getElementById('detail-title').textContent = gameState.player.title;
+            document.getElementById('detail-area').textContent = gameState.areas.find(a => a.id === gameState.currentAreaId).name;
+            document.getElementById('detail-enemies').textContent = gameState.player.enemiesDefeated;
+            
+            // Player combat stats
+            document.getElementById('player-power').textContent = gameState.player.strength;
+            document.getElementById('player-defense').textContent = gameState.player.defense;
+            document.getElementById('player-speed').textContent = gameState.player.speed;
+            document.getElementById('player-luck').textContent = gameState.player.luck;
+            document.getElementById('player-magic').textContent = gameState.player.magic;
+            
+            // Enemy stats
+            document.getElementById('enemy-name').textContent = gameState.enemy.name;
+            document.getElementById('enemy-hp').textContent = gameState.enemy.hp;
+            document.getElementById('enemy-max-hp').textContent = gameState.enemy.maxHp;
+            document.getElementById('enemy-character').innerHTML = `<i class="${gameState.enemy.icon}"></i>`;
+            
+            // Player character
+            document.getElementById('player-hp').textContent = gameState.player.hp;
+            document.getElementById('player-max-hp').textContent = gameState.player.maxHp;
+            
+            // Area info
+            const area = gameState.areas.find(a => a.id === gameState.currentAreaId);
+            document.getElementById('area-name').textContent = area.name;
+            document.getElementById('area-desc').textContent = area.description;
+            
+            // Skill buttons
+            const fireballSkill = gameState.skills.find(s => s.name === "Cầu Lửa");
+            skillBtn.innerHTML = `<i class="fas fa-fire"></i> Cầu Lửa (${fireballSkill.cost} MP)`;
+            skillBtn.disabled = gameState.player.mp < fireballSkill.cost;
+            
+            // Heal button
+            const healSkill = gameState.skills.find(s => s.name === "Chữa Lành");
+            healBtn.innerHTML = `<i class="fas fa-heart"></i> Hồi Phục (${healSkill.cost} MP)`;
+            healBtn.disabled = gameState.player.mp < healSkill.cost || gameState.player.hp >= gameState.player.maxHp;
+            
+            // Spin count
+            document.getElementById('spin-count').textContent = gameState.spin.count;
+            document.getElementById('spin-cost').textContent = gameState.spin.cost;
+            spinBtn.disabled = gameState.spin.count <= 0 || gameState.player.gold < gameState.spin.cost;
+            
+            // Update inventory
+            updateInventoryUI();
+            
+            // Update equipment
+            updateEquipmentUI();
+            
+            // Update quests
+            updateQuestsUI();
+            
+            // Update skills
+            updateSkillsUI();
+            
+            // Update login rewards
+            updateLoginRewardsUI();
+            
+            // Update spin recent rewards
+            updateRecentRewardsUI();
+            
+            // Save game state
+            saveGame();
+        }
+
+        // Setup tab switching
+        function setupTabs() {
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === tabId) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+        }
+
+        // Setup wheel for spin
+        function setupWheel() {
+            const rewards = [
+                { text: "100 Vàng", color: "#f1c40f", value: "gold", rarity: "common" },
+                { text: "50 EXP", color: "#4cd137", value: "exp", rarity: "uncommon" },
+                { text: "Bình HP Lớn", color: "#e84118", value: "potion", rarity: "uncommon" },
+                { text: "200 Vàng", color: "#f1c40f", value: "gold", rarity: "common" },
+                { text: "Kiếm Sắt", color: "#00a8ff", value: "weapon", rarity: "common" },
+                { text: "100 EXP", color: "#4cd137", value: "exp", rarity: "uncommon" },
+                { text: "500 Vàng", color: "#f1c40f", value: "gold", rarity: "rare" },
+                { text: "Giáp Hiếm", color: "#9c88ff", value: "armor", rarity: "rare" }
+            ];
+            
+            wheel.innerHTML = '<div class="wheel-pointer"></div>';
+            
+            rewards.forEach((reward, index) => {
+                const section = document.createElement('div');
+                section.className = 'wheel-section';
+                section.textContent = reward.text;
+                section.style.backgroundColor = reward.color;
+                section.style.transform = `rotate(${index * 45}deg) translate(0, -200px) rotate(${index * 45}deg)`;
+                section.setAttribute('data-value', reward.value);
+                section.setAttribute('data-rarity', reward.rarity);
+                wheel.appendChild(section);
+            });
+        }
+
+        // Generate a random enemy
+        function generateEnemy() {
+            const area = gameState.areas.find(a => a.id === gameState.currentAreaId);
+            const enemyTypes = [
+                { name: "Bóng Ma Rừng", type: "ghost", icon: "fas fa-ghost", strength: 18, defense: 5, hp: 120, exp: 35 },
+                { name: "Goblin Đen", type: "goblin", icon: "fas fa-user-injured", strength: 12, defense: 3, hp: 80, exp: 20 },
+                { name: "Sói Tàn Ác", type: "wolf", icon: "fas fa-paw", strength: 15, defense: 4, hp: 100, exp: 30 }
+            ];
+            
+            const enemyType = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+            
+            // Enemy stats based on player level and area difficulty
+            const levelMultiplier = 1 + (gameState.player.level - 1) * 0.3 + (area.difficulty - 1) * 0.2;
+            
+            gameState.enemy = {
+                name: enemyType.name,
+                hp: Math.floor(enemyType.hp * levelMultiplier),
+                maxHp: Math.floor(enemyType.hp * levelMultiplier),
+                strength: Math.floor(enemyType.strength * levelMultiplier),
+                defense: Math.floor(enemyType.defense * levelMultiplier),
+                exp: Math.floor(enemyType.exp * levelMultiplier),
+                goldMin: Math.floor(20 * levelMultiplier),
+                goldMax: Math.floor(40 * levelMultiplier),
+                type: enemyType.type,
+                icon: enemyType.icon,
+                abilities: ["Tấn công cơ bản"]
+            };
+            
+            updateUI();
+            addLogEntry(`Một ${enemyType.name} xuất hiện từ bóng tối!`, "combat");
+        }
+
+        // Attack enemy with animations
+        function attack() {
+            if (gameState.enemy.hp <= 0) return;
+            
+            // Player attack animation
+            const playerChar = document.getElementById('player-character');
+            playerChar.classList.add('attacking');
+            
+            // Player damage calculation
+            const playerDamage = Math.floor(Math.random() * (gameState.player.strength - 5)) + 10;
+            const enemyDefenseReduction = Math.floor(gameState.enemy.defense * 0.7);
+            const actualDamage = Math.max(1, playerDamage - enemyDefenseReduction);
+            
+            setTimeout(() => {
+                // Enemy takes damage animation
+                const enemyChar = document.getElementById('enemy-character');
+                enemyChar.classList.add('taking-damage');
+                
+                // Show damage popup
+                createDamagePopup(enemyChar, actualDamage, false);
+                
+                // Apply damage
+                gameState.enemy.hp -= actualDamage;
+                
+                addLogEntry(`Bạn tấn công ${gameState.enemy.name} gây ${actualDamage} sát thương!`, "combat");
+                
+                // Check if enemy is defeated
+                if (gameState.enemy.hp <= 0) {
+                    gameState.enemy.hp = 0;
+                    setTimeout(() => defeatEnemy(), 500);
+                    return;
+                }
+                
+                // Enemy counterattack after a delay
+                setTimeout(() => enemyAttack(), 800);
+                
+                // Remove animations
+                setTimeout(() => {
+                    playerChar.classList.remove('attacking');
+                    enemyChar.classList.remove('taking-damage');
+                }, 500);
+                
+                updateUI();
+            }, 300);
+        }
+
+        // Enemy attack
+        function enemyAttack() {
+            const enemyChar = document.getElementById('enemy-character');
+            enemyChar.classList.add('attacking');
+            
+            // Enemy damage calculation
+            const enemyDamage = Math.floor(Math.random() * (gameState.enemy.strength - 3)) + 8;
+            const playerDefenseReduction = Math.floor(gameState.player.defense * 0.8);
+            const actualDamage = Math.max(1, enemyDamage - playerDefenseReduction);
+            
+            setTimeout(() => {
+                // Player takes damage animation
+                const playerChar = document.getElementById('player-character');
+                playerChar.classList.add('taking-damage');
+                
+                // Show damage popup
+                createDamagePopup(playerChar, actualDamage, true);
+                
+                // Apply damage
+                gameState.player.hp -= actualDamage;
+                
+                addLogEntry(`${gameState.enemy.name} tấn công bạn gây ${actualDamage} sát thương!`, "combat");
+                
+                // Check if player is defeated
+                if (gameState.player.hp <= 0) {
+                    gameState.player.hp = 0;
+                    addLogEntry("Bạn đã bị đánh bại! Hồi sinh với 50% HP.", "combat");
+                    setTimeout(() => {
+                        gameState.player.hp = Math.floor(gameState.player.maxHp * 0.5);
+                        gameState.player.mp = Math.floor(gameState.player.maxMp * 0.5);
+                        updateUI();
+                    }, 1500);
+                }
+                
+                // Remove animations
+                setTimeout(() => {
+                    enemyChar.classList.remove('attacking');
+                    playerChar.classList.remove('taking-damage');
+                }, 500);
+                
+                updateUI();
+            }, 300);
+        }
+
+        // Create damage popup
+        function createDamagePopup(targetElement, damage, isPlayer) {
+            const popup = document.createElement('div');
+            popup.className = isPlayer ? 'damage-popup' : 'damage-popup';
+            popup.textContent = `-${damage}`;
+            popup.style.left = '50%';
+            popup.style.top = '0';
+            
+            targetElement.appendChild(popup);
+            
+            // Remove popup after animation
+            setTimeout(() => {
+                popup.remove();
+            }, 1000);
+        }
+
+        // Use skill
+        function useSkill() {
+            const skill = gameState.skills.find(s => s.name === "Cầu Lửa");
+            if (gameState.player.mp < skill.cost) return;
+            
+            // Deduct MP
+            gameState.player.mp -= skill.cost;
+            
+            // Skill animation
+            const playerChar = document.getElementById('player-character');
+            playerChar.classList.add('attacking');
+            
+            // Skill damage calculation (ignores some defense)
+            const skillDamage = skill.damage + Math.floor(gameState.player.magic * 0.5);
+            const enemyDefenseReduction = Math.floor(gameState.enemy.defense * 0.3);
+            const actualDamage = Math.max(1, skillDamage - enemyDefenseReduction);
+            
+            setTimeout(() => {
+                // Enemy takes damage animation
+                const enemyChar = document.getElementById('enemy-character');
+                enemyChar.classList.add('taking-damage');
+                
+                // Show damage popup with special color
+                createDamagePopup(enemyChar, actualDamage, false);
+                
+                // Apply damage
+                gameState.enemy.hp -= actualDamage;
+                
+                addLogEntry(`Bạn sử dụng ${skill.name} gây ${actualDamage} sát thương lên ${gameState.enemy.name}!`, "combat");
+                
+                // Check if enemy is defeated
+                if (gameState.enemy.hp <= 0) {
+                    gameState.enemy.hp = 0;
+                    setTimeout(() => defeatEnemy(), 500);
+                    return;
+                }
+                
+                // Enemy counterattack after a delay
+                setTimeout(() => enemyAttack(), 800);
+                
+                // Remove animations
+                setTimeout(() => {
+                    playerChar.classList.remove('attacking');
+                    enemyChar.classList.remove('taking-damage');
+                }, 500);
+                
+                updateUI();
+            }, 300);
+        }
+
+        // Heal player
+        function heal() {
+            const skill = gameState.skills.find(s => s.name === "Chữa Lành");
+            if (gameState.player.mp < skill.cost || gameState.player.hp >= gameState.player.maxHp) return;
+            
+            // Deduct MP
+            gameState.player.mp -= skill.cost;
+            
+            // Heal animation
+            const playerChar = document.getElementById('player-character');
+            
+            // Create heal popup
+            const popup = document.createElement('div');
+            popup.className = 'heal-popup';
+            popup.textContent = `+${skill.heal}`;
+            popup.style.left = '50%';
+            popup.style.top = '0';
+            
+            playerChar.appendChild(popup);
+            
+            // Apply heal
+            gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + skill.heal);
+            
+            addLogEntry(`Bạn sử dụng ${skill.name} hồi phục ${skill.heal} HP.`, "combat");
+            
+            // Remove popup after animation
+            setTimeout(() => {
+                popup.remove();
+            }, 1000);
+            
+            // Enemy still attacks
+            setTimeout(() => enemyAttack(), 800);
+            
+            updateUI();
+        }
+
+        // Defend action
+        function defend() {
+            addLogEntry("Bạn chuyển sang tư thế phòng thủ, giảm 50% sát thương nhận vào trong lượt này.", "combat");
+            
+            // Implement defense logic (temporary damage reduction)
+            // This would require a more complex state management for temporary effects
+            // For now, just log the action
+            
+            // Enemy still attacks but with reduced damage
+            setTimeout(() => {
+                enemyAttack(); // This should use reduced damage when defense is active
+            }, 800);
+        }
+
+        // Defeat enemy and give rewards
+        function defeatEnemy() {
+            // Calculate rewards
+            const expGained = gameState.enemy.exp;
+            const goldGained = Math.floor(Math.random() * (gameState.enemy.goldMax - gameState.enemy.goldMin + 1)) + gameState.enemy.goldMin;
+            
+            // Add rewards
+            gameState.player.exp += expGained;
+            gameState.player.gold += goldGained;
+            gameState.player.enemiesDefeated++;
+            
+            addLogEntry(`Bạn đã đánh bại ${gameState.enemy.name}! Nhận được ${expGained} EXP và ${goldGained} vàng.`, "reward");
+            
+            // Update quest progress
+            updateQuestProgress("kill", 1, goldGained);
+            
+            // Check level up
+            checkLevelUp();
+            
+            // Generate new enemy after a delay
+            setTimeout(() => {
+                generateEnemy();
+            }, 2000);
+        }
+
+        // Check if player should level up
+        function checkLevelUp() {
+            if (gameState.player.exp >= gameState.player.maxExp) {
+                gameState.player.level++;
+                gameState.player.exp -= gameState.player.maxExp;
+                gameState.player.maxExp = Math.floor(gameState.player.maxExp * 1.8);
+                
+                // Increase stats
+                gameState.player.maxHp = Math.floor(gameState.player.maxHp * 1.25);
+                gameState.player.hp = gameState.player.maxHp;
+                gameState.player.maxMp = Math.floor(gameState.player.maxMp * 1.2);
+                gameState.player.mp = gameState.player.maxMp;
+                gameState.player.strength = Math.floor(gameState.player.strength * 1.15);
+                gameState.player.defense = Math.floor(gameState.player.defense * 1.1);
+                gameState.player.speed = Math.floor(gameState.player.speed * 1.05);
+                gameState.player.luck = Math.floor(gameState.player.luck * 1.05);
+                gameState.player.magic = Math.floor(gameState.player.magic * 1.1);
+                gameState.player.skillPoints += 1;
+                
+                // Update title based on level
+                if (gameState.player.level >= 10) gameState.player.title = "Chiến Binh Cứng Cỏi";
+                if (gameState.player.level >= 20) gameState.player.title = "Anh Hùng";
+                if (gameState.player.level >= 30) gameState.player.title = "Huyền Thoại";
+                
+                addLogEntry(`Chúc mừng! Bạn đã lên cấp ${gameState.player.level}! Nhận được 1 điểm kỹ năng.`, "level");
+                
+                // Update quest progress
+                updateQuestProgress("level", 1, 0);
+                
+                // Check for level up again (in case of multiple levels)
+                checkLevelUp();
+            }
+        }
+
+        // Update quest progress
+        function updateQuestProgress(type, amount, gold = 0) {
+            gameState.quests.active.forEach(quest => {
+                if (quest.name.includes("Tiêu diệt") && type === "kill") {
+                    quest.progress += amount;
+                } else if (quest.name.includes("Tài nguyên") && type === "kill") {
+                    quest.progress += gold;
+                } else if (quest.name.includes("Thám hiểm") && type === "level") {
+                    quest.progress = Math.min(quest.target, gameState.player.level);
+                }
+                
+                // Check if quest is completed
+                if (quest.progress >= quest.target && !quest.completed) {
+                    quest.completed = true;
+                    addLogEntry(`Nhiệm vụ "${quest.name}" đã hoàn thành! Nhận thưởng ngay!`, "reward");
+                }
+            });
+            
+            updateQuestsUI();
+        }
+
+        // Update inventory UI
+        function updateInventoryUI() {
+            inventoryItems.innerHTML = '';
+            
+            // Display inventory items
+            gameState.inventory.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = `item ${item.rarity}`;
+                itemElement.innerHTML = `
+                    <div class="item-icon"><i class="${item.icon}"></i></div>
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-stats">
+                        ${item.type === 'weapon' ? `<p><i class="fas fa-fist-raised"></i> Sức mạnh: +${item.strength}</p>` : ''}
+                        ${item.type === 'armor' || item.type === 'shield' ? `<p><i class="fas fa-shield-alt"></i> Phòng thủ: +${item.defense}</p>` : ''}
+                        ${item.type === 'potion' && item.heal ? `<p><i class="fas fa-heart"></i> Hồi phục: +${item.heal} HP</p>` : ''}
+                        ${item.type === 'potion' && item.mana ? `<p><i class="fas fa-wine-bottle"></i> Mana: +${item.mana}</p>` : ''}
+                        ${item.hp ? `<p><i class="fas fa-heartbeat"></i> HP: +${item.hp}</p>` : ''}
+                        ${item.mp ? `<p><i class="fas fa-wine-bottle"></i> MP: +${item.mp}</p>` : ''}
+                        ${item.strength ? `<p><i class="fas fa-fist-raised"></i> Sức mạnh: +${item.strength}</p>` : ''}
+                        ${item.defense ? `<p><i class="fas fa-shield-alt"></i> Phòng thủ: +${item.defense}</p>` : ''}
+                        ${item.speed ? `<p><i class="fas fa-bolt"></i> Tốc độ: +${item.speed}</p>` : ''}
+                        ${item.luck ? `<p><i class="fas fa-dice"></i> May mắn: +${item.luck}</p>` : ''}
+                        ${item.magic ? `<p><i class="fas fa-magic"></i> Phép thuật: +${item.magic}</p>` : ''}
+                    </div>
+                    <div class="item-rarity rarity-${item.rarity}">${item.rarity.toUpperCase()}</div>
+                    <div class="item-actions">
+                        ${item.type === 'potion' || item.type === 'scroll' ? 
+                            `<button class="btn btn-primary use-item-btn" data-id="${item.id}" style="margin-top: 10px; padding: 8px 15px; font-size: 0.9rem;">
+                                <i class="fas fa-check"></i> Sử dụng
+                            </button>` : 
+                            `<button class="btn btn-primary equip-item-btn" data-id="${item.id}" style="margin-top: 10px; padding: 8px 15px; font-size: 0.9rem;">
+                                <i class="fas fa-user-check"></i> Trang bị
+                            </button>`
+                        }
+                    </div>
+                `;
+                inventoryItems.appendChild(itemElement);
+            });
+            
+            // Update inventory count
+            document.getElementById('inventory-count').textContent = `(${gameState.inventory.length}/50)`;
+        }
+
+        // Update equipment UI
+        function updateEquipmentUI() {
+            const equipmentSlotsData = [
+                { id: 'weapon', name: 'Vũ khí', icon: 'fas fa-sword' },
+                { id: 'shield', name: 'Khiên', icon: 'fas fa-shield-alt' },
+                { id: 'armor', name: 'Áo giáp', icon: 'fas fa-vest' },
+                { id: 'helmet', name: 'Mũ', icon: 'fas fa-hat-wizard' },
+                { id: 'gloves', name: 'Găng tay', icon: 'fas fa-hand-fist' },
+                { id: 'boots', name: 'Giày', icon: 'fas fa-walking' },
+                { id: 'amulet', name: 'Dây chuyền', icon: 'fas fa-gem' },
+                { id: 'ring', name: 'Nhẫn', icon: 'fas fa-ring' }
+            ];
+            
+            equipmentSlots.innerHTML = '';
+            
+            equipmentSlotsData.forEach(slot => {
+                const slotElement = document.createElement('div');
+                slotElement.className = 'item';
+                slotElement.style.textAlign = 'center';
+                
+                const equippedItem = gameState.equipped[slot.id];
+                
+                slotElement.innerHTML = `
+                    <div class="item-icon"><i class="${slot.icon}"></i></div>
+                    <div class="item-name">${slot.name}</div>
+                    ${equippedItem ? `
+                        <div class="item-stats">
+                            <p>${equippedItem.name}</p>
+                            ${equippedItem.strength ? `<p><i class="fas fa-fist-raised"></i> +${equippedItem.strength}</p>` : ''}
+                            ${equippedItem.defense ? `<p><i class="fas fa-shield-alt"></i> +${equippedItem.defense}</p>` : ''}
+                        </div>
+                        <button class="btn btn-danger unequip-btn" data-slot="${slot.id}" style="margin-top: 10px; padding: 8px 15px; font-size: 0.9rem;">
+                            <i class="fas fa-times"></i> Tháo
+                        </button>
+                    ` : `
+                        <div class="item-stats">
+                            <p>Chưa trang bị</p>
+                        </div>
+                        <button class="btn btn-primary" disabled style="margin-top: 10px; padding: 8px 15px; font-size: 0.9rem;">
+                            <i class="fas fa-question"></i> Trống
+                        </button>
+                    `}
+                `;
+                
+                equipmentSlots.appendChild(slotElement);
+            });
+        }
+
+        // Update quests UI
+        function updateQuestsUI() {
+            activeQuests.innerHTML = '';
+            completedQuests.innerHTML = '';
+            
+            // Active quests
+            gameState.quests.active.forEach(quest => {
+                const questElement = document.createElement('div');
+                questElement.className = 'quest';
+                questElement.innerHTML = `
+                    <div class="quest-header">
+                        <div class="quest-title">
+                            <i class="${quest.icon}"></i>
+                            <span>${quest.name}</span>
+                        </div>
+                        <div class="quest-reward">
+                            <i class="fas fa-coins"></i> ${quest.rewardGold} Vàng
+                        </div>
+                    </div>
+                    <p>${quest.description}</p>
+                    <div class="quest-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${(quest.progress / quest.target) * 100}%"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span>Tiến độ: ${quest.progress}/${quest.target}</span>
+                            <span>${quest.completed ? 'Đã hoàn thành' : 'Đang thực hiện'}</span>
+                        </div>
+                    </div>
+                    ${quest.completed ? 
+                        `<button class="btn btn-success claim-quest-btn" data-id="${quest.id}" style="margin-top: 10px;">
+                            <i class="fas fa-gift"></i> Nhận thưởng
+                        </button>` : 
+                        `<button class="btn btn-primary" disabled style="margin-top: 10px;">
+                            <i class="fas fa-hourglass-half"></i> Đang thực hiện
+                        </button>`
+                    }
+                `;
+                activeQuests.appendChild(questElement);
+            });
+            
+            // Completed quests
+            gameState.quests.completed.forEach(quest => {
+                const questElement = document.createElement('div');
+                questElement.className = 'quest';
+                questElement.innerHTML = `
+                    <div class="quest-header">
+                        <div class="quest-title">
+                            <i class="${quest.icon}"></i>
+                            <span>${quest.name}</span>
+                        </div>
+                        <div class="quest-reward">
+                            <i class="fas fa-check-circle"></i> Đã hoàn thành
+                        </div>
+                    </div>
+                    <p>${quest.description}</p>
+                    <div class="quest-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span>Đã nhận: ${quest.rewardGold} Vàng, ${quest.rewardExp} EXP</span>
+                            <span>Hoàn thành</span>
+                        </div>
+                    </div>
+                `;
+                completedQuests.appendChild(questElement);
+            });
+        }
+
+        // Update skills UI
+        function updateSkillsUI() {
+            skillsList.innerHTML = '';
+            
+            gameState.skills.forEach(skill => {
+                const skillElement = document.createElement('div');
+                skillElement.className = `item ${skill.type === 'active' ? 'rare' : 'uncommon'}`;
+                skillElement.innerHTML = `
+                    <div class="item-icon"><i class="${skill.icon}"></i></div>
+                    <div class="item-name">${skill.name} <span class="level-badge">Cấp ${skill.level}</span></div>
+                    <div class="item-stats">
+                        ${skill.type === 'active' ? 
+                            `<p><i class="fas fa-bolt"></i> Sát thương: ${skill.damage}</p>
+                             <p><i class="fas fa-wine-bottle"></i> Tiêu hao MP: ${skill.cost}</p>
+                             <p><i class="fas fa-hourglass"></i> Hồi chiêu: ${skill.cooldown} lượt</p>` : 
+                            `<p><i class="fas fa-fist-raised"></i> Sức mạnh: +${skill.strength}</p>
+                             <p><i class="fas fa-shield-alt"></i> Phòng thủ: +${skill.defense}</p>`
+                        }
+                        <p><i class="fas fa-info-circle"></i> ${skill.description}</p>
+                    </div>
+                    ${skill.level < skill.maxLevel ? 
+                        `<button class="btn btn-primary upgrade-skill-btn" data-id="${skill.id}" style="margin-top: 10px;">
+                            <i class="fas fa-arrow-up"></i> Nâng cấp (${gameState.player.skillPoints} điểm)
+                        </button>` : 
+                        `<button class="btn btn-success" disabled style="margin-top: 10px;">
+                            <i class="fas fa-check"></i> Đã đạt cấp tối đa
+                        </button>`
+                    }
+                `;
+                skillsList.appendChild(skillElement);
+            });
+        }
+
+        // Update login rewards UI
+        function updateLoginRewardsUI() {
+            loginRewardsDays.innerHTML = '';
+            
+            gameState.loginRewards.forEach(reward => {
+                const dayElement = document.createElement('div');
+                dayElement.className = `reward-day ${reward.claimed ? 'claimed' : reward.day === gameState.currentDay ? 'available' : reward.day < gameState.currentDay ? 'upcoming' : ''}`;
+                dayElement.innerHTML = `
+                    <div class="day-number">${reward.day}</div>
+                    <div class="day-reward">${reward.day === gameState.currentDay ? 'Hôm nay' : ''}</div>
+                `;
+                dayElement.title = reward.reward;
+                
+                // Add click event for available rewards
+                if (reward.day === gameState.currentDay && !reward.claimed) {
+                    dayElement.addEventListener('click', () => claimLoginReward(reward.day));
+                }
+                
+                loginRewardsDays.appendChild(dayElement);
+            });
+        }
+
+        // Update recent rewards UI
+        function updateRecentRewardsUI() {
+            const recentRewards = document.getElementById('recent-rewards');
+            recentRewards.innerHTML = '';
+            
+            gameState.spin.recentRewards.forEach(reward => {
+                const rewardElement = document.createElement('div');
+                rewardElement.className = `item ${reward.rarity}`;
+                rewardElement.innerHTML = `
+                    <div class="item-icon"><i class="${reward.icon}"></i></div>
+                    <div class="item-name">${reward.name}</div>
+                    <div class="item-rarity rarity-${reward.rarity}">${reward.rarity.toUpperCase()}</div>
+                `;
+                recentRewards.appendChild(rewardElement);
+            });
+        }
+
+        // Spin the wheel with animation
+        function spinWheel() {
+            if (gameState.spin.count <= 0 || gameState.player.gold < gameState.spin.cost) return;
+            
+            // Deduct gold and spin count
+            gameState.player.gold -= gameState.spin.cost;
+            gameState.spin.count--;
+            
+            // Disable spin button during animation
+            spinBtn.disabled = true;
+            
+            // Start wheel spin animation
+            wheel.classList.add('spinning');
+            
+            // Determine reward after animation
+            setTimeout(() => {
+                // Random reward
+                const rewards = [
+                    { type: "gold", amount: 100, name: "100 Vàng", icon: "fas fa-coins", rarity: "common" },
+                    { type: "gold", amount: 200, name: "200 Vàng", icon: "fas fa-coins", rarity: "common" },
+                    { type: "gold", amount: 500, name: "500 Vàng", icon: "fas fa-coins", rarity: "rare" },
+                    { type: "exp", amount: 50, name: "50 EXP", icon: "fas fa-star", rarity: "uncommon" },
+                    { type: "exp", amount: 100, name: "100 EXP", icon: "fas fa-star", rarity: "uncommon" },
+                    { type: "potion", amount: 1, name: "Bình HP Lớn", icon: "fas fa-heart", rarity: "uncommon" },
+                    { type: "weapon", amount: 1, name: "Kiếm Sắt", icon: "fas fa-sword", rarity: "common" },
+                    { type: "armor", amount: 1, name: "Giáp Hiếm", icon: "fas fa-shield-alt", rarity: "rare" }
+                ];
+                
+                const randomReward = rewards[Math.floor(Math.random() * rewards.length)];
+                
+                // Apply reward
+                if (randomReward.type === "gold") {
+                    gameState.player.gold += randomReward.amount;
+                    addLogEntry(`Quay được ${randomReward.name}!`, "reward");
+                } else if (randomReward.type === "exp") {
+                    gameState.player.exp += randomReward.amount;
+                    addLogEntry(`Quay được ${randomReward.name}!`, "reward");
+                    checkLevelUp();
+                } else if (randomReward.type === "potion") {
+                    gameState.inventory.push({
+                        id: gameState.inventory.length + 1,
+                        name: "Bình HP Lớn",
+                        type: "potion",
+                        rarity: "uncommon",
+                        heal: 50,
+                        icon: "fas fa-heart",
+                        value: 75
+                    });
+                    addLogEntry(`Quay được ${randomReward.name}!`, "reward");
+                } else if (randomReward.type === "weapon") {
+                    gameState.inventory.push({
+                        id: gameState.inventory.length + 1,
+                        name: "Kiếm Sắt",
+                        type: "weapon",
+                        rarity: "common",
+                        strength: 8,
+                        icon: "fas fa-sword",
+                        value: 120
+                    });
+                    addLogEntry(`Quay được ${randomReward.name}!`, "reward");
+                } else if (randomReward.type === "armor") {
+                    gameState.inventory.push({
+                        id: gameState.inventory.length + 1,
+                        name: "Giáp Hiếm",
+                        type: "armor",
+                        rarity: "rare",
+                        defense: 10,
+                        hp: 30,
+                        icon: "fas fa-shield-alt",
+                        value: 250
+                    });
+                    addLogEntry(`Quay được ${randomReward.name}!`, "reward");
+                }
+                
+                // Add to recent rewards
+                gameState.spin.recentRewards.unshift(randomReward);
+                if (gameState.spin.recentRewards.length > 3) {
+                    gameState.spin.recentRewards.pop();
+                }
+                
+                // Reset wheel animation
+                wheel.classList.remove('spinning');
+                
+                // Re-enable spin button
+                spinBtn.disabled = gameState.spin.count <= 0 || gameState.player.gold < gameState.spin.cost;
+                
+                updateUI();
+            }, 4000);
+        }
+
+        // Claim login reward
+        function claimLoginReward(day) {
+            const reward = gameState.loginRewards.find(r => r.day === day);
+            if (!reward || reward.claimed) return;
+            
+            // Mark as claimed
+            reward.claimed = true;
+            
+            // Give rewards based on day
+            if (day === 1) {
+                gameState.player.gold += 100;
+                gameState.inventory.push({
+                    id: gameState.inventory.length + 1,
+                    name: "Bình HP",
+                    type: "potion",
+                    rarity: "common",
+                    heal: 30,
+                    icon: "fas fa-heart",
+                    value: 50
+                });
+                addLogEntry(`Nhận thưởng đăng nhập ngày ${day}: 100 vàng và Bình HP!`, "reward");
+            } else if (day === 2) {
+                gameState.player.gold += 150;
+                gameState.inventory.push({
+                    id: gameState.inventory.length + 1,
+                    name: "Kiếm Sắt",
+                    type: "weapon",
+                    rarity: "common",
+                    strength: 5,
+                    icon: "fas fa-sword",
+                    value: 100
+                });
+                addLogEntry(`Nhận thưởng đăng nhập ngày ${day}: 150 vàng và Kiếm Sắt!`, "reward");
+            } else if (day === 3) {
+                gameState.player.gold += 500;
+                gameState.inventory.push({
+                    id: gameState.inventory.length + 1,
+                    name: "Áo Giáp Da Thuộc",
+                    type: "armor",
+                    rarity: "uncommon",
+                    defense: 7,
+                    hp: 20,
+                    icon: "fas fa-vest",
+                    value: 150
+                });
+                addLogEntry(`Nhận thưởng đăng nhập ngày ${day}: 500 vàng và Áo Giáp!`, "reward");
+            }
+            // Add more rewards for other days...
+            
+            updateUI();
+        }
+
+        // Equip item
+        function equipItem(itemId) {
+            const item = gameState.inventory.find(i => i.id === itemId);
+            if (!item) return;
+            
+            // Determine slot based on item type
+            let slot = null;
+            switch(item.type) {
+                case 'weapon': slot = 'weapon'; break;
+                case 'shield': slot = 'shield'; break;
+                case 'armor': slot = 'armor'; break;
+                case 'helmet': slot = 'helmet'; break;
+                case 'gloves': slot = 'gloves'; break;
+                case 'boots': slot = 'boots'; break;
+                case 'amulet': slot = 'amulet'; break;
+                case 'ring': slot = 'ring'; break;
+                default: return; // Can't equip this item type
+            }
+            
+            // Unequip current item if any
+            if (gameState.equipped[slot]) {
+                // Return stats from equipped item
+                if (gameState.equipped[slot].strength) gameState.player.strength -= gameState.equipped[slot].strength;
+                if (gameState.equipped[slot].defense) gameState.player.defense -= gameState.equipped[slot].defense;
+                if (gameState.equipped[slot].hp) gameState.player.maxHp -= gameState.equipped[slot].hp;
+                if (gameState.equipped[slot].mp) gameState.player.maxMp -= gameState.equipped[slot].mp;
+                if (gameState.equipped[slot].speed) gameState.player.speed -= gameState.equipped[slot].speed;
+                if (gameState.equipped[slot].luck) gameState.player.luck -= gameState.equipped[slot].luck;
+                if (gameState.equipped[slot].magic) gameState.player.magic -= gameState.equipped[slot].magic;
+                
+                // Add to inventory
+                gameState.inventory.push(gameState.equipped[slot]);
+            }
+            
+            // Equip new item
+            gameState.equipped[slot] = item;
+            
+            // Remove from inventory
+            gameState.inventory = gameState.inventory.filter(i => i.id !== itemId);
+            
+            // Apply stats from new item
+            if (item.strength) gameState.player.strength += item.strength;
+            if (item.defense) gameState.player.defense += item.defense;
+            if (item.hp) {
+                gameState.player.maxHp += item.hp;
+                gameState.player.hp += item.hp;
+            }
+            if (item.mp) {
+                gameState.player.maxMp += item.mp;
+                gameState.player.mp += item.mp;
+            }
+            if (item.speed) gameState.player.speed += item.speed;
+            if (item.luck) gameState.player.luck += item.luck;
+            if (item.magic) gameState.player.magic += item.magic;
+            
+            addLogEntry(`Bạn trang bị ${item.name}.`, "system");
+            updateUI();
+        }
+
+        // Unequip item
+        function unequipItem(slot) {
+            if (!gameState.equipped[slot]) return;
+            
+            const item = gameState.equipped[slot];
+            
+            // Return stats from equipped item
+            if (item.strength) gameState.player.strength -= item.strength;
+            if (item.defense) gameState.player.defense -= item.defense;
+            if (item.hp) {
+                gameState.player.maxHp -= item.hp;
+                if (gameState.player.hp > gameState.player.maxHp) {
+                    gameState.player.hp = gameState.player.maxHp;
+                }
+            }
+            if (item.mp) {
+                gameState.player.maxMp -= item.mp;
+                if (gameState.player.mp > gameState.player.maxMp) {
+                    gameState.player.mp = gameState.player.maxMp;
+                }
+            }
+            if (item.speed) gameState.player.speed -= item.speed;
+            if (item.luck) gameState.player.luck -= item.luck;
+            if (item.magic) gameState.player.magic -= item.magic;
+            
+            // Add to inventory
+            gameState.inventory.push(item);
+            
+            // Remove from equipped
+            gameState.equipped[slot] = null;
+            
+            addLogEntry(`Bạn tháo ${item.name}.`, "system");
+            updateUI();
+        }
+
+        // Use item (potion or scroll)
+        function useItem(itemId) {
+            const item = gameState.inventory.find(i => i.id === itemId);
+            if (!item) return;
+            
+            if (item.type === 'potion') {
+                if (item.heal) {
+                    gameState.player.hp = Math.min(gameState.player.maxHp, gameState.player.hp + item.heal);
+                    addLogEntry(`Bạn sử dụng ${item.name} hồi phục ${item.heal} HP.`, "combat");
+                }
+                if (item.mana) {
+                    gameState.player.mp = Math.min(gameState.player.maxMp, gameState.player.mp + item.mana);
+                    addLogEntry(`Bạn sử dụng ${item.name} hồi phục ${item.mana} MP.`, "combat");
+                }
+                
+                // Remove from inventory
+                gameState.inventory = gameState.inventory.filter(i => i.id !== itemId);
+            } else if (item.type === 'scroll' && item.revive) {
+                // This would be used when player is dead
+                addLogEntry(`Bạn giữ ${item.name} để hồi sinh khi cần.`, "system");
+            }
+            
+            updateUI();
+        }
+
+        // Claim quest reward
+        function claimQuestReward(questId) {
+            const quest = gameState.quests.active.find(q => q.id === questId);
+            if (!quest || !quest.completed) return;
+            
+            // Give rewards
+            gameState.player.gold += quest.rewardGold;
+            gameState.player.exp += quest.rewardExp;
+            
+            // Move to completed quests
+            gameState.quests.completed.push({
+                id: quest.id,
+                name: quest.name,
+                description: quest.description,
+                rewardGold: quest.rewardGold,
+                rewardExp: quest.rewardExp,
+                icon: quest.icon
+            });
+            
+            // Remove from active quests
+            gameState.quests.active = gameState.quests.active.filter(q => q.id !== questId);
+            
+            addLogEntry(`Nhận thưởng nhiệm vụ "${quest.name}": ${quest.rewardGold} vàng và ${quest.rewardExp} EXP!`, "reward");
+            
+            // Check level up
+            checkLevelUp();
+            
+            updateUI();
+        }
+
+        // Upgrade skill
+        function upgradeSkill(skillId) {
+            if (gameState.player.skillPoints <= 0) return;
+            
+            const skill = gameState.skills.find(s => s.id === skillId);
+            if (!skill || skill.level >= skill.maxLevel) return;
+            
+            // Use skill point
+            gameState.player.skillPoints--;
+            
+            // Upgrade skill
+            skill.level++;
+            
+            // Improve skill stats
+            if (skill.type === 'active') {
+                skill.damage = Math.floor(skill.damage * 1.3);
+                if (skill.name === "Chữa Lành") {
+                    skill.heal = Math.floor(skill.heal * 1.3);
+                }
+            } else {
+                skill.strength = Math.floor(skill.strength * 1.5);
+                skill.defense = Math.floor(skill.defense * 1.5);
+            }
+            
+            addLogEntry(`Nâng cấp ${skill.name} lên cấp ${skill.level}!`, "level");
+            updateUI();
+        }
+
+        // Add entry to combat log
+        function addLogEntry(message, type) {
+            const now = new Date();
+            const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.innerHTML = `<span class="log-time">[${timeString}]</span> ${message}`;
+            
+            combatLog.prepend(logEntry);
+            
+            // Keep only last 15 entries
+            const entries = combatLog.querySelectorAll('.log-entry');
+            if (entries.length > 15) {
+                entries[entries.length - 1].remove();
+            }
+            
+            // Save to game state
+            gameState.logEntries.unshift({ time: timeString, message, type });
+            if (gameState.logEntries.length > 20) {
+                gameState.logEntries.pop();
+            }
+        }
+
+        // Clear log
+        function clearLog() {
+            combatLog.innerHTML = '<div class="log-entry"><span class="log-time">[10:00:15]</span> Nhật ký đã được xóa.</div>';
+            gameState.logEntries = [];
+        }
+
+        // Change area
+        function changeArea() {
+            const currentAreaIndex = gameState.areas.findIndex(a => a.id === gameState.currentAreaId);
+            const nextAreaIndex = (currentAreaIndex + 1) % gameState.areas.length;
+            gameState.currentAreaId = gameState.areas[nextAreaIndex].id;
+            
+            addLogEntry(`Bạn đã đến ${gameState.areas[nextAreaIndex].name}.`, "system");
+            generateEnemy();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Combat buttons
+            attackBtn.addEventListener('click', attack);
+            skillBtn.addEventListener('click', useSkill);
+            healBtn.addEventListener('click', heal);
+            defendBtn.addEventListener('click', defend);
+            nextEnemyBtn.addEventListener('click', () => {
+                generateEnemy();
+                addLogEntry("Bạn tìm thấy một kẻ thù mới!", "combat");
+            });
+            
+            // Spin button
+            spinBtn.addEventListener('click', spinWheel);
+            
+            // Clear log button
+            clearLogBtn.addEventListener('click', clearLog);
+            
+            // Event delegation for dynamic elements
+            document.addEventListener('click', (e) => {
+                // Use item button
+                if (e.target.closest('.use-item-btn')) {
+                    const itemId = parseInt(e.target.closest('.use-item-btn').getAttribute('data-id'));
+                    useItem(itemId);
+                }
+                
+                // Equip item button
+                if (e.target.closest('.equip-item-btn')) {
+                    const itemId = parseInt(e.target.closest('.equip-item-btn').getAttribute('data-id'));
+                    equipItem(itemId);
+                }
+                
+                // Unequip button
+                if (e.target.closest('.unequip-btn')) {
+                    const slot = e.target.closest('.unequip-btn').getAttribute('data-slot');
+                    unequipItem(slot);
+                }
+                
+                // Claim quest button
+                if (e.target.closest('.claim-quest-btn')) {
+                    const questId = parseInt(e.target.closest('.claim-quest-btn').getAttribute('data-id'));
+                    claimQuestReward(questId);
+                }
+                
+                // Upgrade skill button
+                if (e.target.closest('.upgrade-skill-btn')) {
+                    const skillId = parseInt(e.target.closest('.upgrade-skill-btn').getAttribute('data-id'));
+                    upgradeSkill(skillId);
+                }
+                
+                // Claim login reward button
+                if (e.target.closest('.claim-reward-btn')) {
+                    const day = parseInt(e.target.closest('.claim-reward-btn').getAttribute('data-day'));
+                    claimLoginReward(day);
+                }
+                
+                // Buy spin button
+                if (e.target.id === 'buy-spin-btn') {
+                    if (gameState.player.gold >= 400) {
+                        gameState.player.gold -= 400;
+                        gameState.spin.count += 5;
+                        addLogEntry("Mua 5 lượt quay thành công!", "reward");
+                        updateUI();
+                    } else {
+                        addLogEntry("Không đủ vàng để mua lượt quay!", "combat");
+                    }
+                }
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Space to attack
+                if (e.code === 'Space' && document.getElementById('combat').classList.contains('active')) {
+                    e.preventDefault();
+                    attack();
+                }
+                
+                // 1 to use skill
+                if (e.code === 'Digit1' && document.getElementById('combat').classList.contains('active')) {
+                    e.preventDefault();
+                    useSkill();
+                }
+                
+                // 2 to heal
+                if (e.code === 'Digit2' && document.getElementById('combat').classList.contains('active')) {
+                    e.preventDefault();
+                    heal();
+                }
+                
+                // 3 to defend
+                if (e.code === 'Digit3' && document.getElementById('combat').classList.contains('active')) {
+                    e.preventDefault();
+                    defend();
+                }
+                
+                // N for next enemy
+                if (e.code === 'KeyN' && document.getElementById('combat').classList.contains('active')) {
+                    e.preventDefault();
+                    generateEnemy();
+                }
+                
+                // Tab shortcuts
+                if (e.code === 'KeyQ' && e.ctrlKey) {
+                    e.preventDefault();
+                    document.querySelector('[data-tab="quests"]').click();
+                }
+                if (e.code === 'KeyI' && e.ctrlKey) {
+                    e.preventDefault();
+                    document.querySelector('[data-tab="inventory"]').click();
+                }
+                if (e.code === 'KeyC' && e.ctrlKey) {
+                    e.preventDefault();
+                    document.querySelector('[data-tab="combat"]').click();
+                }
+            });
+        }
+
+        // Initialize the game when page loads
+        window.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
